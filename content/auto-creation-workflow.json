@@ -1,0 +1,92 @@
+{
+  "topic_title": "Auto-Creation Workflow",
+  "difficulty_level": "Intermediate",
+  "sections": [
+    {
+      "subheading": "Overview",
+      "content": [
+        "A client uploads a PDF through the Next.js frontend.",
+        "The backend extracts the raw text from the PDF.",
+        "Gemini API converts the text into structured content.",
+        "The result is stored in IBM DB2.",
+        "Next.js reads the new database entry and displays the tutorial through a dynamic route."
+      ]
+    },
+    {
+      "subheading": "PDF Upload from the Frontend",
+      "content": [
+        "The process starts when a client uploads a PDF file.",
+        "The upload happens through a clean Next.js interface.",
+        "The frontend sends the file securely to the backend.",
+        "The upload should use HTTPS.",
+        "The UI should stay simple, clear, and easy to understand."
+      ]
+    },
+    {
+      "subheading": "Text Extraction in the Backend",
+      "content": [
+        "The backend receives the uploaded PDF and reads its contents.",
+        "It accepts the uploaded file safely.",
+        "It extracts the raw text from the PDF.",
+        "It cleans the text before passing it forward.",
+        "It rejects invalid or unsafe file uploads."
+      ]
+    },
+    {
+      "subheading": "AI Writer Layer",
+      "content": [
+        "Gemini API acts like the writer that turns raw notes into a finished tutorial.",
+        "The backend should send a strict prompt with the raw PDF text.",
+        "The response should be a structured JSON object.",
+        "The JSON should be valid and ready for storage.",
+        "The Markdown should be clean and ready to display."
+      ]
+    },
+    {
+      "subheading": "Database Storage in IBM DB2",
+      "content": [
+        "The cleaned output is saved in DB2.",
+        "Store the tutorial JSON in your IBM DB2 instance.",
+        "Save the slug so the page can be found later.",
+        "Save metadata like title, difficulty, and SEO tags.",
+        "Keep the original PDF in Cloud Storage instead of placing it directly in the database."
+      ]
+    },
+    {
+      "subheading": "Dynamic Routing in Next.js",
+      "content": [
+        "Next.js can create tutorial pages automatically using dynamic routes.",
+        "Create a route like /pages/tutorials/[slug].js.",
+        "When a visitor opens a tutorial URL, Next.js reads the slug.",
+        "The page queries DB2 for matching tutorial data.",
+        "The Markdown content is rendered automatically."
+      ]
+    },
+    {
+      "subheading": "Security and Protection",
+      "content": [
+        "Use rate limiting to stop spam uploads.",
+        "Sanitize input before storing content.",
+        "Validate extracted text before AI processing.",
+        "Use safety settings in Gemini or Vertex AI.",
+        "Restrict uploads by file type and size."
+      ]
+    },
+    {
+      "subheading": "Deployment on GCP",
+      "content": [
+        "Containerize the frontend and backend separately.",
+        "Deploy with Cloud Run or GKE.",
+        "Use Cloud Storage for original PDFs.",
+        "Keep DB2 for structured tutorial records.",
+        "Use HTTPS everywhere in production."
+      ]
+    }
+  ],
+  "code_examples": [
+    {
+      "description": "Backend auto-generation flow",
+      "raw_code_snippet": "async function generateAutoPage(pdfText) {\n  const prompt = `\n    Transform the following raw notes into a clean tutorial.\n    Return ONLY a JSON object with these keys:\n    \\\"slug\\\", \\\"title\\\", \\\"content\\\", \\\"difficulty\\\", \\\"seoTags\\\", and \\\"codeExamples\\\".\n\n    Notes: ${pdfText}\n  `;\n\n  const result = await geminiModel.generateContent(prompt);\n  const pageData = JSON.parse(result.response.text());\n\n  await db2.insert('TUTORIALS', pageData);\n\n  return pageData.slug;\n}"
+    }
+  ]
+}
